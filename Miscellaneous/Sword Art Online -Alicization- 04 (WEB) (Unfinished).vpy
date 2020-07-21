@@ -32,7 +32,7 @@ def dehardsub(clip_a: vs.VideoNode, clip_b: vs.VideoNode) -> vs.VideoNode:
 
 
 #scenes
-opstart = 1296
+opstart = 0
 
 op_signs = [(opstart+397, opstart+508)] \
     if opstart is not None else []
@@ -54,7 +54,7 @@ replace_scenes = [
 
 #compare
 src_wk = lvf.misc.source(r"E:\dehardsub\SAO3_04_EN_HD.mp4")#[9432:16049]
-src_fu = lvf.misc.source(r"E:\dehardsub\[HorribleSubs] Sword Art Online - Alicization - 04 [1080p].mkv")#[9447:16064]
+src_fu = lvf.misc.source(r"E:\dehardsub\[HorribleSubs] Sword Art Online - Alicization - 04 [1080p].mkv")#[1:]
 src_wk = src_wk[0] * 4 + src_wk
 scomp = lvf.comparison.stack_compare(src_wk, src_fu, make_diff=True, warn=True)
 
