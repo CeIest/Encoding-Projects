@@ -1,3 +1,4 @@
+#Audio: we'll be using WAKANIM's, it may be trimmed or shifted before muxing.
 from functools import partial
 import os
 import havsfunc as haf
@@ -15,7 +16,7 @@ core = vs.core
 
 
 
-#Stolen from LightArrowsEXE
+#Stolen from LightArrowsEXE.
 def dehardsub(clip_a: vs.VideoNode, clip_b: vs.VideoNode) -> vs.VideoNode:
     hardsubmask = kgf.hardsubmask(clip_a, clip_b)
     clip = core.std.MaskedMerge(clip_a, clip_b, hardsubmask)
@@ -31,14 +32,14 @@ def dehardsub(clip_a: vs.VideoNode, clip_b: vs.VideoNode) -> vs.VideoNode:
     
 
 
-#scenes
+#scenes replace
 opstart = 0
 
-op_signs = [(opstart+397, opstart+508)] \
+op_signs = [] \
     if opstart is not None else []
-op_range = [(opstart, opstart+2157)] \
+op_range = [] \
     if opstart is not None else []
-op_interp = [(opstart+594, opstart+628)] \
+op_interp = [] \
     if opstart is not None else []    
 
 
@@ -52,12 +53,21 @@ replace_scenes = [
 
 
 
-#compare
-src_wk = lvf.misc.source(r"E:\dehardsub\SAO3_04_EN_HD.mp4")#[9432:16049]
-src_fu = lvf.misc.source(r"E:\dehardsub\[HorribleSubs] Sword Art Online - Alicization - 04 [1080p].mkv")#[1:]
-src_wk = src_wk[0] * 4 + src_wk
-scomp = lvf.comparison.stack_compare(src_wk, src_fu, make_diff=True, warn=True)
 
+src_wk = lvf.misc.source(r"E:\dehardsub\SAO3_04_EN_HD.mp4")
+src_fu = lvf.misc.source(r"E:\dehardsub\[HorribleSubs] Sword Art Online - Alicization - 04 [1080p].mkv")
+
+#trimming waka's first frame to match WAKA
+src_wk = src_wk[0] * 1 + src_wk
+#trimming cr's after OP frames
+src_fu = src_fu[:2154]+src_fu[2157:]
+#trimming cr's after credits frames to match WAKA
+src_fu = src_fu[:2235]+src_fu[2250:]
+#duplicating cr black frames middle of the episode to match WAKA
+src_fu = src_fu.std.DuplicateFrames([16045]*5)
+
+
+scomp = lvf.comparison.stack_compare(src_wk, src_fu, make_diff=True, warn=True)
 
 
 src = dehardsub(src_wk, src_fu)
@@ -68,7 +78,7 @@ src = depth(src, 32)
 
 
 out = functoolz.compose(
-#def dependencies
+#def filtering dependencies
 )
 
 
