@@ -1,4 +1,5 @@
 #Audio: we'll be using WAKANIM's, it may be trimmed or shifted before muxing.
+#last updated 21 July 2020
 from functools import partial
 import os
 import havsfunc as haf
