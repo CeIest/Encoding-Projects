@@ -1,5 +1,4 @@
-#Audio: we'll be using WAKANIM's, it may be trimmed or shifted before muxing.
-#last updated 21 July 2020
+#In this wase we will be using WAKANIM's audio, it will be trimmed or/and shifted before muxing.
 from functools import partial
 import os
 import havsfunc as haf
@@ -12,8 +11,6 @@ from toolz import functoolz
 from vsutil import depth, get_w, get_y, iterate, join, plane, split
 import vapoursynth as vs
 core = vs.core
-
-
 
 
 
@@ -33,7 +30,8 @@ def dehardsub(clip_a: vs.VideoNode, clip_b: vs.VideoNode) -> vs.VideoNode:
     
 
 
-#scenes replace
+
+#Scenes replace
 opstart = 0
 
 op_signs = [] \
@@ -43,12 +41,9 @@ op_range = [] \
 op_interp = [] \
     if opstart is not None else []    
 
-
-
 hs_signs = [    
 ]    
 
- 
 replace_scenes = [
 ]
 
@@ -58,13 +53,13 @@ replace_scenes = [
 src_wk = lvf.misc.source(r"E:\dehardsub\SAO3_04_EN_HD.mp4")
 src_fu = lvf.misc.source(r"E:\dehardsub\[HorribleSubs] Sword Art Online - Alicization - 04 [1080p].mkv")
 
-#trimming waka's first frame to match WAKA
+#freezing WAKA's first frame to match CR
 src_wk = src_wk[0] * 1 + src_wk
-#trimming cr's after OP frames
+#Trimming CR's after-OP frames to match WAKA
 src_fu = src_fu[:2154]+src_fu[2157:]
-#trimming cr's after credits frames to match WAKA
+#Trimming CR's after-credits frames to match WAKA
 src_fu = src_fu[:2235]+src_fu[2250:]
-#duplicating cr black frames middle of the episode to match WAKA
+#Duplicating CR's black frames in the middle of the episode to match WAKA
 src_fu = src_fu.std.DuplicateFrames([16045]*5)
 
 
@@ -79,7 +74,7 @@ src = depth(src, 32)
 
 
 out = functoolz.compose(
-#def filtering dependencies
+#Filtering defs
 )
 
 
@@ -87,7 +82,7 @@ out = out(src)
 
 final = depth(out, 10)
 final.set_output()
-#vspipe --y4m dehardsub.vpy - | x264 --demuxer y4m --preset veryslow --output-depth 10 --crf 14 --threads 18 --tune animation -o x264output.mkv -
+#vspipe --y4m saoali04.vpy - | x264 --demuxer y4m --preset veryslow --output-depth 10 --crf 14 --threads 18 --tune animation -o output.mkv -
 
 
 
