@@ -82,7 +82,7 @@ out = out(src)
 
 final = depth(out, 10)
 final.set_output()
-#vspipe --y4m saoali04.vpy - | x264 --demuxer y4m --preset veryslow --output-depth 10 --crf 14 --threads 18 --tune animation -o output.mkv -
+#| x264 --demuxer y4m --preset veryslow --output-depth 10 --crf 14 --threads 18 --tune animation
 
 
 
