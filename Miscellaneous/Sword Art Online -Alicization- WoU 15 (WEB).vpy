@@ -82,4 +82,4 @@ out = out(src)
 #scomp.set_output()
 final = depth(out, 10)
 final.set_output()
-#vspipe --y4m 15.vpy - | x264 --demuxer y4m --preset veryslow --output-depth 10 --crf 15 --threads 18 --tune animation -o output.mkv -
+#vspipe --y4m 15.vpy - | x264 --demuxer y4m --preset veryslow --output-depth 10 --crf 14 --vbv-bufsize 7500 --threads 18 --tune animation -o output.mkv -
