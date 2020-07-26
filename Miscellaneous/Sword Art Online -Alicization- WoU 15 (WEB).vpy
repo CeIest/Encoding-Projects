@@ -57,9 +57,8 @@ src_fu = lvf.misc.source(r"E:\encode\[Erai-raws] Sword Art Online Alicization - 
 src_wk = src_wk[0] * 1 + src_wk
 
 src_fu = src_fu[:9445]+src_fu[9446:]
-#Trimming CR's after-credits frames to match WAKA
-#src_fu = src_fu[:2235]+src_fu[2250:]
-#Duplicating CR's black frames in the middle of the episode to match WAKA
+
+
 src_fu = src_fu.std.DuplicateFrames([18722]*3)
 src_fu = src_fu[:18726]+src_fu[18728:]
 src_fu = src_fu.std.DuplicateFrames([33924]*72)
