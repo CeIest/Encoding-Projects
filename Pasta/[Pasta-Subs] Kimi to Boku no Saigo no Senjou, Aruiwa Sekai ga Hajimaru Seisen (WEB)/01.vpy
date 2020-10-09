@@ -35,7 +35,7 @@ src = taa.TAAmbk(src,aatype='Nnedi3') #antialiasing
 deband_mask = lvf.denoise.detail_mask(src, brz_a=2000, brz_b=1000)
 deband = dbs.f3kpf(src, 17, 30, 30)
 deband_b = dbs.f3kpf(src, 17, 84, 84)
-deband = lvf.rfs(deband, deband_b, [(2090, 2107)])
+deband = lvf.rfs(deband, deband_b, [(2090, 2107)]) #be me, forgetting to remove the deband range....
 deband = core.std.MaskedMerge(deband, src, deband_mask)
 src = deband
 
