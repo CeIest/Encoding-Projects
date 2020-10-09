@@ -13,7 +13,6 @@ import debandshit as dbs
 from cooldegrain import CoolDegrain
 core.max_cache_size = 32768
 
-# Vardë <3
 #vspipe --y4m 01.vpy - | x264 --demuxer y4m --preset veryslow --crf 14.5 --ref 16 --deblock=-1:-1 --bframes 16 --aq-mode 3 --aq-strength 0.85 --qcomp 0.70 --output-depth 10 -o out.mkv -
 
 
@@ -32,12 +31,8 @@ src = denoise
 src = taa.TAAmbk(src,aatype='Nnedi3') #antialiasing
 
 
-deband_mask = lvf.denoise.detail_mask(src, brz_a=2000, brz_b=1000)
-deband = dbs.f3kpf(src, 17, 30, 30)
-deband_b = dbs.f3kpf(src, 17, 84, 84)
-deband = lvf.rfs(deband, deband_b, [(2090, 2107)]) #be me, forgetting to remove the deband range....
-deband = core.std.MaskedMerge(deband, src, deband_mask)
-src = deband
+#forgot to include this line during v1 encode...
+src = dbs.f3kbilateral(src, range=17, y=30, c=30)
 
 
 src = hys.Hysteria(src)
