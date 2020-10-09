@@ -17,7 +17,7 @@ core.max_cache_size = 32768
 #vspipe --y4m 01.vpy - | x264 --demuxer y4m --preset veryslow --crf 14.5 --ref 16 --deblock=-1:-1 --bframes 16 --aq-mode 3 --aq-strength 0.85 --qcomp 0.70 --output-depth 10 -o out.mkv -
 
 
-src = core.ffms2.Source(r"E:\[-missingNo-] Our Last Crusade or the Rise of a New World - 01 [1080p].mkv") #Recommended for .mkv and .avi
+src = core.ffms2.Source(r"E:\[-missingNo-] Our Last Crusade or the Rise of a New World - 01 [1080p].mkv")
 
 src = fvf.Depth(src, 16)
 
@@ -40,7 +40,7 @@ deband = core.std.MaskedMerge(deband, src, deband_mask)
 src = deband
 
 
-src = hys.Hysteria(src) #sharpening
+src = hys.Hysteria(src)
 
 
 src = fvf.Depth(src, 10)
