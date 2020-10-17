@@ -29,6 +29,7 @@ y, u, v = kgf.split(src)
 height = 810
 width = vsutil.get_w(height)
 
+#Bicubic b 0.33 c 0.33 AR: 1.78 Steps: 1
 descale_b = core.descale.Debicubic(y, width, height, b=1/3, c=1/3).resize.Bicubic(1920, 1080, filter_param_a=1/3, filter_param_b=1/3)
 descale_b = kgf.join([descale_b, u, v])
 src = fvf.Depth(descale_b, 10)
