@@ -12,7 +12,7 @@ import vsutil
 
 core.max_cache_size = 32768
 
-#vspipe --y4m VN.vpy - | x264 --demuxer y4m --preset veryslow --crf 15.5 --deblock=-1:-1 --output-depth 10 -o x264output.h264 -
+#x264 --demuxer y4m --preset veryslow --crf 15.5 --deblock=-1:-1 --output-depth 10 -o x264output.h264 -
 
 
 src = core.lsmas.LWLibavSource(r"Sword Art Online - Alicization Lycoris\SAOAL_SPECIAL_CONTENTS_DISC\BDMV\STREAM\00002.m2ts")
