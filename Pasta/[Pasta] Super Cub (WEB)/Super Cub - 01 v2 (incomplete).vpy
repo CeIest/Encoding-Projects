@@ -9,6 +9,7 @@ import lvsfunc as lvf
 #from toolz import functoolz
 from vsutil import depth, get_w, get_y, iterate, join, plane, split
 import vsutil
+import xvs
 import kagefunc as kgf
 import fvsfunc as fvf
 import muvsfunc as muvf
@@ -75,6 +76,8 @@ luma = lvf.sraa(luma, rfactor=1.8, rep=13, alpha=0.2, beta=0.8, gamma=500)#.rgvs
 #merge chromas
 src = vdf.merge_chroma(luma, chroma)
 
+#cwarp
+src = xvs.WarpFixChromaBlend(src, thresh=63)
 
 #deband
 detail_mask = lvf.mask.detail_mask(src, brz_a=0.040, brz_b=0.020)
