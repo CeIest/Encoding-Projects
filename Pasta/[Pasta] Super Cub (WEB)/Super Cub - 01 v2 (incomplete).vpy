@@ -1,23 +1,17 @@
 import vapoursynth as vs
-from functools import partial
-import os
-import kagefunc as kgf
-import lvsfunc as lvf
-#import vsTAAmbk as taa
-#from nnedi3_resample import nnedi3_resample
-#from nnedi3_rpow2CL import *
-#from toolz import functoolz
 from vsutil import depth, get_w, get_y, iterate, join, plane, split
+from functools import partial
+import atomchtools as atf
+import muvsfunc as muvf
+import vardefunc as vdf
+import kagefunc as kgf
+import havsfunc as hvf
+import fvsfunc as fvf
+import lvsfunc as lvf
+import G41Fun as gf
 import vsutil
 import xvs
-import kagefunc as kgf
-import fvsfunc as fvf
-import muvsfunc as muvf
-import lvsfunc as lvf
-import atomchtools as atf
-import vardefunc as vdf
-import havsfunc as hvf
-import G41Fun as gf
+import os
 core = vs.core
 
 core.max_cache_size = 32768
