@@ -23,8 +23,8 @@ core.max_cache_size = 32768
 
 
 
-#Stolen from LightArrowsEXE | Luma dehardsub
-def dehardsubluma(clip_a: vs.VideoNode, clip_b: vs.VideoNode) -> vs.VideoNode:
+#Stolen from LightArrowsEXE
+def dehardsub(clip_a: vs.VideoNode, clip_b: vs.VideoNode) -> vs.VideoNode:
     hardsubmask = kgf.hardsubmask(clip_a, clip_b)
     clip = core.std.MaskedMerge(clip_a, clip_b, hardsubmask)
 
@@ -33,9 +33,10 @@ def dehardsubluma(clip_a: vs.VideoNode, clip_b: vs.VideoNode) -> vs.VideoNode:
     )
     clip_fade = core.std.MaskedMerge(clip_a, clip_b, hardsubmask_fade)
     clip = lvf.rfs(clip, clip_fade, ranges=op_signs + hs_signs)
-    if replace_scenesluma:
-        clip = lvf.rfs(clip, clip_b, ranges=replace_scenesluma)
+    if replace_scenes:
+        clip = lvf.rfs(clip, clip_b, ranges=replace_scenes)
     return clip
+
 opstart = 0
 op_signs = [] \
     if opstart is not None else []
@@ -45,33 +46,7 @@ op_interp = [] \
     if opstart is not None else []    
 hs_signs = [    
 ]    
-replace_scenesluma = [(894, 966),(9182, 9290),(12825, 12921),(15006, 15114),(25012, 25132),(27636, 27720),(27966, 28038),(31425, 34762), ]
-
-
-#Stolen from LightArrowsEXE | Chroma dehardsub
-def dehardsubchroma(clip_a: vs.VideoNode, clip_b: vs.VideoNode) -> vs.VideoNode:
-    hardsubmask = kgf.hardsubmask(clip_a, clip_b)
-    clip = core.std.MaskedMerge(clip_a, clip_b, hardsubmask)
-
-    hardsubmask_fade = lvf.util.quick_resample(
-        clip_a, partial(kgf.hardsubmask_fades, ref=clip_b, expand_n=15, highpass=600)
-    )
-    clip_fade = core.std.MaskedMerge(clip_a, clip_b, hardsubmask_fade)
-    clip = lvf.rfs(clip, clip_fade, ranges=op_signs + hs_signs)
-    if replace_sceneschroma:
-        clip = lvf.rfs(clip, clip_b, ranges=replace_sceneschroma)
-    return clip
-opstart = 0
-op_signs = [] \
-    if opstart is not None else []
-op_range = [] \
-    if opstart is not None else []
-op_interp = [] \
-    if opstart is not None else []    
-hs_signs = [    
-]    
-replace_sceneschroma = [(5729, 5849),(6089, 6161),(13344, 13428),(28223, 28283),(31425, 34762), ]
-
+replace_scenes = [(894, 965),(5729, 5848),(6089, 6160),(9182, 9289),(12825, 12920),(15006, 15113),(25012, 25131),(27636, 27719),(27966, 28037),(28223, 28282),(31425, 34762), ]
 
 
 #AoD+CR dehardsub luma ;  Waka+AMZ dehardsub chroma = merge
@@ -82,8 +57,8 @@ src_wk = lvf.misc.source(r"E:\sc01v2\episodes\WAKA.mp4")
 src_fu = lvf.misc.source(r"E:\sc01v2\episodes\Funi.mkv")[240:]
 
 #dehardsub
-luma = dehardsubluma(src_aod, src_cr)
-chroma = dehardsubchroma(src_wk, src_amz)
+luma = dehardsub(src_aod, src_cr)
+chroma = dehardsub(src_wk, src_amz)
 
 luma = fvf.Depth(luma, 16)
 chroma = fvf.Depth(chroma, 16)
