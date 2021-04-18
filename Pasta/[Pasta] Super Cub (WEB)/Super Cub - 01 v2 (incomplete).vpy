@@ -66,7 +66,7 @@ chroma = fvf.Depth(chroma, 16)
 
 #This destroys too much details, plz revise this (6883)
 #Luma dering 
-dering = hvf.EdgeCleaner(luma, 14, smode=1, hot=True)
+dering = hvf.EdgeCleaner(luma, 12, smode=1, hot=True)
 dering = gf.MaskedDHA(dering, darkstr=0.05, brightstr=0.75)
 luma = dering
 
@@ -92,3 +92,4 @@ src = core.std.MaskedMerge(deband, src, detail_mask)
 
 final = depth(src, 10)
 final.set_output()
+#| x264 --demuxer y4m --preset veryslow --output-depth 10 --crf 16.5 --aq-mode 3 --aq-strength 0.85 --ref 16 --qcomp 0.7
