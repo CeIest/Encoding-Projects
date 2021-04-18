@@ -87,6 +87,7 @@ detail_mask = lvf.mask.detail_mask(src, brz_a=0.040, brz_b=0.020)
 deband = vdf.dumb3kdb(src, threshold=28)
 src = core.std.MaskedMerge(deband, src, detail_mask)
 
+#might need some dehalo, especially at ~2:30
 
 #Checking if I didn't miss any signs
 #scomp = lvf.comparison.diff(src, src_cr, thr=127, height=288, return_array=False)
