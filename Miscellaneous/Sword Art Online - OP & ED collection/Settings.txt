@@ -1,1 +1,0 @@
-x264 --demuxer y4m --preset veryslow --output-depth 10 --ref 16 --crf 15.0 --qcomp 0.70
