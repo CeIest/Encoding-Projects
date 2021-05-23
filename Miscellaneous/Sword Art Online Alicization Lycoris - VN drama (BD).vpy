@@ -18,7 +18,6 @@ core.max_cache_size = 32768
 
 
 src = core.lsmas.LWLibavSource(r"00002.m2ts")
-src2 = core.lsmas.LWLibavSource(r"00002.m2ts")
 src = fvf.Depth(src, 32)
 
 
