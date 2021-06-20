@@ -6,6 +6,6 @@ Here is the repository of my Sword Art Online OP & ED encodes. The video files a
 
 Hopefully my future-self will come back here in a year and cringe at these shitty scripts, & will end up updating them.
 
-(Alicization OPs 1;2, EDs 1;2 scripts aren't available because ◯PMan already did them.)
+(Alicization OPs 1;2, EDs 1;2 as well as Alicization - War of Underworld OP 1 & ED 1 scripts aren't available because ◯PMan already did them.)
 
 ______________________________________________
