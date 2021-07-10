@@ -1,1 +1,0 @@
-Encode dones as Pasta. Those encodes can be either released under my name or for other groups.
