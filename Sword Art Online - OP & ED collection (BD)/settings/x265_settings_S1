@@ -4,6 +4,6 @@
 --rd 3 --no-rect --no-amp --rskip 1 --tu-intra-depth 2 --tu-inter-depth 2 --tskip
 --no-strong-intra-smoothing
 --psy 1 --no-cutree
---crf 15 --aq-mode 3 --aq-strength 0.85 --qcomp 0.72
+--crf 15.5 --aq-mode 3 --aq-strength 0.85 --qcomp 0.72
 --deblock=-1:-1 --no-sao --no-sao-non-deblock
 --min-keyint 23 --keyint 240 --ref 4 --bframes 9

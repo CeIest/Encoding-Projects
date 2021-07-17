@@ -6,15 +6,12 @@ from vardautomation import (JAPANESE, AudioCutter,
                             VideoStream, VPath, X265Encoder)
 
 
-
 core = vs.core
 core.num_threads = 16
 
 
-
-
 #Source
-JPBD = FileInfo(r'G:/OPED/m2ts/Crossing Field.m2ts', 24, -24,
+JPBD = FileInfo(r'm2ts/Crossing Field.m2ts', 24, -24,
                 idx=lambda x: source(x),
                 preset=[PresetBD, PresetFLAC])
 JPBD.name_file_final = VPath(fr"premux/{JPBD.name} (Premux).mkv")
@@ -22,7 +19,6 @@ JPBD.do_qpfile = True
 JPBD.a_src = VPath(f"{JPBD.name}.wav")
 JPBD.a_src_cut = VPath(f"{JPBD.name}_cut.wav")
 JPBD.a_enc_cut = VPath(f"{JPBD.name}_cut.flac")
-
 
 
 
@@ -44,34 +40,34 @@ def main() -> vs.VideoNode:
 
 
     #Rescale
-    src = kgf.inverse_scale(src, height=720, kernel='bicubic', b=1/2, c=1/2)
+    src = kgf.inverse_scale(src, height=720, kernel='bicubic', b=1/3, c=1/3)
     rescale = nnedi3_resample(src).resize.Spline36(1920, 1080, format=vs.YUV420P16)
 
 
-    #aa
+    #AA
     luma = get_y(rescale)
     aa = taa.TAAmbk(luma, aatype='Nnedi3')
     aamerged = vdf.misc.merge_chroma(aa, rescale)
 
 
-    #sharpening
+    #Sharpening
     sharpen = hvf.ContraSharpening(aamerged, rescale)
 
 
-    #denoise
+    #Denoise
     clip_y = mvf.GetPlane(sharpen, 0)
     denoise = eoe.denoise.BM3D(clip_y, 1, radius=1)
     denmerge = core.std.ShufflePlanes([denoise, sharpen, sharpen], [0,1,2], colorfamily=sharpen.format.color_family)
 
 
-    #debanding
+    #Debanding
     Mask = kgf.retinex_edgemask(denmerge, sigma=0.1)
     detail_mask = core.std.Binarize(Mask,9828,0)
     deband = vdf.deband.dumb3kdb(denmerge, threshold=52, grain=14)
     deband = core.std.MaskedMerge(deband, denmerge, detail_mask)
 
 
-    # Graining
+    #Graining
     graigasm_args = dict(
         thrs=[x << 8 for x in (32, 80, 128, 176)],
         strengths=[(0.4, 0.2), (0.3, 0.2), (0.2, 0.0), (0.0, 0.0)],
@@ -128,6 +124,8 @@ class Encoding:
         runner = SelfRunner(self.clip, self.file, config)
         runner.run()
         runner.do_cleanup()
+
+
 
 
 if __name__ == '__main__':
