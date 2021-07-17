@@ -1,0 +1,9 @@
+-o {clip_output:s} - --y4m
+--output-depth {bits:d}
+--preset veryslow
+--rd 3 --no-rect --no-amp --rskip 1 --tu-intra-depth 2 --tu-inter-depth 2 --tskip
+--no-strong-intra-smoothing
+--psy 1 --no-cutree
+--aq-mode 3 --aq-strength 0.85 --qcomp 0.72
+--deblock=-1:-1 --no-sao --no-sao-non-deblock
+--min-keyint 23 --keyint 240 --ref 4 --bframes 9

@@ -11,7 +11,7 @@ core.num_threads = 16
 
 
 #Source
-JPBD = FileInfo(r'm2ts/SAO_S1_OP1.m2ts', 24, -24,
+JPBD = FileInfo(r'm2ts/SAO_S1_OP2v2.m2ts', 24, -24,
                 idx=lambda x: source(x),
                 preset=[PresetBD, PresetFLAC])
 JPBD.name_file_final = VPath(fr"premux/{JPBD.name} (Premux).mkv")
@@ -63,7 +63,7 @@ def main() -> vs.VideoNode:
     #Debanding
     Mask = kgf.retinex_edgemask(denmerge, sigma=0.1)
     detail_mask = core.std.Binarize(Mask,9828,0)
-    deband = vdf.deband.dumb3kdb(denmerge, threshold=52, grain=14)
+    deband = vdf.deband.dumb3kdb(denmerge, threshold=48, grain=12)
     deband = core.std.MaskedMerge(deband, denmerge, detail_mask)
 
 
