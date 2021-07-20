@@ -33,7 +33,9 @@ def main() -> vs.VideoNode:
     import kagefunc as kgf
     import EoEfunc as eoe
     import mvsfunc as mvf
+    import lvsfunc as lvf
     import vsTAAmbk as taa
+    import insaneAA
 
     src = JPBD.clip_cut
     src = depth(src, 32)
@@ -50,8 +52,13 @@ def main() -> vs.VideoNode:
     aamerged = vdf.misc.merge_chroma(aa, rescale)
 
 
+    #Custom AA
+    customaa = insaneAA.insaneAA(rescale, nnedi3_mode=insaneAA.NNEDI3Mode.NNEDI3, nnedi3_device=-1, descale_strength=0.84, kernel='bicubic', descale_height=720)
+    cusaa = lvf.misc.replace_ranges(aamerged, customaa, [(161, 267)])
+
+
     #Sharpening
-    sharpen = hvf.ContraSharpening(aamerged, rescale)
+    sharpen = hvf.ContraSharpening(cusaa, rescale)
 
 
     #Denoise
@@ -70,7 +77,7 @@ def main() -> vs.VideoNode:
     #Graining
     graigasm_args = dict(
         thrs=[x << 8 for x in (32, 80, 128, 176)],
-        strengths=[(0.4, 0.3), (0.3, 0.2), (0.2, 0.1), (0.0, 0.0)],
+        strengths=[(0.5, 0.4), (0.4, 0.3), (0.2, 0.1), (0.0, 0.0)],
         sizes=(1.25, 1.15, 1, 1),
         sharps=(70, 60, 50, 50),
         grainers=[
