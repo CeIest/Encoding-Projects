@@ -3,7 +3,7 @@
 --preset veryslow
 --rd 3 --no-rect --no-amp --rskip 1 --tu-intra-depth 2 --tu-inter-depth 2 --tskip
 --no-strong-intra-smoothing
---merange 34 --weightb 1
---crf 15.5 --aq-mode 3 --aq-strength 0.95 --qcomp 0.70
+--merange 34
+--crf 15 --aq-mode 3 --aq-strength 0.95 --qcomp 0.70
 --deblock=-1:-1 --no-sao --no-sao-non-deblock
 --psy-rd 2.0 --psy-rdoq 1.0 --no-open-gop --keyint 340 --min-keyint 23 --scenecut 40 --rc-lookahead 84 --bframes 16
