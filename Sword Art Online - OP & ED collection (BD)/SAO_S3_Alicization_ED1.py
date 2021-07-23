@@ -11,7 +11,7 @@ core.num_threads = 16
 
 
 #Source
-JPBD = FileInfo(r'm2ts/SAO_S3_Alicization_OP2v2.m2ts', 24, -24,
+JPBD = FileInfo(r'm2ts/SAO_S3_Alicization_ED1.m2ts', 24, -24,
                 idx=lambda x: source(x),
                 preset=[PresetBD, PresetFLAC])
 JPBD.name_file_final = VPath(fr"premux/{JPBD.name} (Premux).mkv")
@@ -57,7 +57,7 @@ def main() -> vs.VideoNode:
     #Deband
     Mask = kgf.retinex_edgemask(ec, sigma=0.1)
     detail_mask = core.std.Binarize(Mask,9820,0)
-    deband = vdf.deband.dumb3kdb(ec, threshold=56, grain=14)
+    deband = vdf.deband.dumb3kdb(ec, threshold=42, grain=12)
     deband = core.std.MaskedMerge(deband, ec, detail_mask.std.BoxBlur(0, 4, 2, 4, 2))
 
 
@@ -75,14 +75,7 @@ def main() -> vs.VideoNode:
     )
     grain = vdf.noise.Graigasm(**graigasm_args).graining(deband)  
 
-
-    #Cropping to get clean letterboxes
-    crop = core.std.Crop(grain, 0, 0, 132, 132).edgefixer.ContinuityFixer(0, 1, 0, 0)
-    crop = core.std.AddBorders(crop, 0, 0, 132, 132)
-    cropout = lvf.misc.replace_ranges(grain, crop, [(866, 889)])
-
-
-    return depth(cropout, 10)
+    return depth(grain, 10)
 
 
 
