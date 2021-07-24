@@ -11,7 +11,7 @@ core.num_threads = 16
 
 
 #Source
-JPBD = FileInfo(r'm2ts/SAO_S3_Alicization_WoU_OP1v1.m2ts', 24, -24,
+JPBD = FileInfo(r'm2ts/SAO_S3_Alicization_WoU_OP1v2.m2ts', 24, -24,
                 idx=lambda x: source(x),
                 preset=[PresetBD, PresetFLAC])
 JPBD.name_file_final = VPath(fr"premux/{JPBD.name} (Premux).mkv")

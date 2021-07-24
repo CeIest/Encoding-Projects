@@ -11,7 +11,7 @@ core.num_threads = 16
 
 
 #Source
-JPBD = FileInfo(r'm2ts/SAO_S3_Alicization_WoU_OP1v1.m2ts', 24, -24,
+JPBD = FileInfo(r'm2ts/SAO_S3_Alicization_WoU_OP2v2.m2ts', 24, -24,
                 idx=lambda x: source(x),
                 preset=[PresetBD, PresetFLAC])
 JPBD.name_file_final = VPath(fr"premux/{JPBD.name} (Premux).mkv")
@@ -26,12 +26,11 @@ JPBD.a_enc_cut = VPath(f"{JPBD.name}_cut.flac")
 #Filtering
 def main() -> vs.VideoNode:
     """Vapoursynth filtering"""
-    from vsutil import depth, get_y
+    from vsutil import depth
     import havsfunc as hvf
     import vardefunc as vdf
     import kagefunc as kgf
     import lvsfunc as lvf
-    from pathlib import Path
     from alicizafunc import hybrid_denoise
 
     src = JPBD.clip_cut
@@ -40,7 +39,7 @@ def main() -> vs.VideoNode:
 
     #Adaptive denoise
     denoise = hybrid_denoise(src, 0.70, 2.0)
-    
+
 
     #AA
     aa = lvf.aa.nneedi3_clamp(denoise, strength=1.6)
@@ -55,35 +54,12 @@ def main() -> vs.VideoNode:
     ec = hvf.EdgeCleaner(dehalo, strength=6, rmode=13, smode=1, hot=True)
 
 
-    #Common deband
+    #Deband
     Mask = kgf.retinex_edgemask(ec, sigma=0.1)
     detail_mask = core.std.Binarize(Mask,9820,0)
-
-    deband_a = vdf.deband.dumb3kdb(ec, threshold=64, grain=14)
-    deband_a = core.std.MaskedMerge(deband_a, ec, detail_mask.std.BoxBlur(0, 4, 2, 4, 2))
-
-
-    #Custom deband taken from ◯PMan (the mask images come from them as well)
-    deband_b_args   = dict(iterations = 2, threshold = 14, radius = 18)
-    custom_deband      = core.placebo.Deband(ec,       planes = 1,   grain = 0, **deband_b_args)
-    custom_deband      = core.placebo.Deband(custom_deband, planes = 1,   grain = 24, **deband_b_args)
-    custom_deband      = core.placebo.Deband(custom_deband, planes = 2|4, grain = 0,  **deband_b_args)
-    custom_deband      = core.placebo.Deband(custom_deband, planes = 2|4, grain = 12,  **deband_b_args)
-
-    def images_to_clip(path: Path) -> vs.VideoNode:
-            return core.std.Splice([core.imwri.Read(str(image)) for image in path.glob('*')])
-    Masktest = images_to_clip(Path(r'Masks/WoU_OP1/'))
-    Masktest = core.resize.Bicubic(Masktest, format=vs.GRAY16, matrix_s='709').std.AssumeFPS(fpsnum=24000,fpsden=1001)
-    Masktest = Masktest[0] * 1945 + Masktest # Can I rename myself as "Ghetto encoder"...??
-
-    masked_deband = core.std.MaskedMerge(deband_a, custom_deband, Masktest)
-    deband = lvf.rfs(deband_a, masked_deband, (1945,1962))
-   
-    #Compare to check if the mask matches
-    # Masktest = core.resize.Bicubic(Masktest, format=vs.YUV420P16)
-    # src = depth(src, 16)
-    # scomp = lvf.comparison.stack_compare(Masktest, src, make_diff=True, warn=True)
-
+    deband = vdf.deband.dumb3kdb(ec, threshold=56, grain=14)
+    deband = core.std.MaskedMerge(deband, ec, detail_mask.std.BoxBlur(0, 4, 2, 4, 2))
+    deband = lvf.misc.replace_ranges(deband, ec, [(0, 173)])
 
     #Grain
     graigasm_args = dict(
@@ -97,11 +73,17 @@ def main() -> vs.VideoNode:
             vdf.noise.AddGrain(seed=333, constant=True)
         ]
     )
-    grain = vdf.noise.Graigasm(**graigasm_args).graining(deband)  
+    grain = vdf.noise.Graigasm(**graigasm_args).graining(deband)
 
-    #Because I dislike seeing grain on a black frames, yes even if it was purposely made like that.
-    crop = core.std.BlankClip(grain)
-    cropout = lvf.misc.replace_ranges(grain, crop, [(2106, 2159)])
+    extragrain = kgf.adaptive_grain(grain, 0.6, luma_scaling=2)
+    extragrain = lvf.misc.replace_ranges(grain, extragrain, [(0, 173)])
+
+
+    #Cropping to get clean letterboxes
+    crop = core.std.Crop(extragrain, 0, 0, 128, 128).edgefixer.ContinuityFixer(0, 1, 0, 0)
+    crop = core.std.AddBorders(crop, 0, 0, 128, 128)
+    cropout = lvf.misc.replace_ranges(extragrain, crop, [(0, 173)])
+
 
     return depth(cropout, 10)
 
