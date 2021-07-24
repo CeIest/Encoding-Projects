@@ -121,7 +121,7 @@ class Encoding:
         muxer = Mux(
             self.file,
             streams=(
-                VideoStream(self.file.name_clip_output, 'x265 10Bits BDrip @ Celest', JAPANESE),
+                VideoStream(self.file.name_clip_output, 'Encode by Celest @ SAOfandom', JAPANESE),
                 AudioStream(self.file.a_enc_cut.format(1), 'FLAC', JAPANESE),
                 None
             )
