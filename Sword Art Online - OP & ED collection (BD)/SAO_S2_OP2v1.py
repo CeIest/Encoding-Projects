@@ -37,7 +37,7 @@ def main() -> vs.VideoNode:
     import vsTAAmbk as taa
 
     src = JPBD.clip_cut
-    src = depth(src, 32)
+    src = depth(src, 16)
 
 
     #Rescale
