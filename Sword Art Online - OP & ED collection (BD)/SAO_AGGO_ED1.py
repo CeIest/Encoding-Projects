@@ -11,7 +11,7 @@ core.num_threads = 16
 
 
 #Source
-JPBD = FileInfo(r'm2ts/SAO_S2_ED3v2.m2ts', 24, -24,
+JPBD = FileInfo(r'm2ts/SAO_AGGO_ED1.m2ts', None, -24,
                 idx=lambda x: source(x),
                 preset=[PresetBD, PresetFLAC])
 JPBD.name_file_final = VPath(fr"premux/{JPBD.name} (Premux).mkv")
@@ -30,12 +30,11 @@ def main() -> vs.VideoNode:
     from nnedi3_resample import nnedi3_resample
     import havsfunc as hvf
     import vardefunc as vdf
+    from alicizafunc import hybrid_denoise
     import kagefunc as kgf
-    import EoEfunc as eoe
-    import vsTAAmbk as taa
 
     src = JPBD.clip_cut
-    src = depth(src, 32)
+    src = depth(src, 16)
 
 
     #Rescale
@@ -45,33 +44,25 @@ def main() -> vs.VideoNode:
     scaled = core.std.ShufflePlanes([rescale, src], planes=[0, 1, 2], colorfamily=vs.YUV)
 
 
-    #AA
-    aa_y = get_y(scaled)
-    aa = taa.TAAmbk(aa_y, aatype='Nnedi3')
-    aamerged = vdf.misc.merge_chroma(aa, scaled)
-
-
-    #Sharpening
-    sharpen = hvf.ContraSharpening(aamerged, scaled)
+    #Dehalo
+    dehalo = hvf.FineDehalo(scaled, rx=2.2, thmi=91, thma=211, darkstr=0, brightstr=1, contra=1)
 
 
     #Denoise
-    den_y = get_y(sharpen)
-    denoise = eoe.denoise.BM3D(den_y, 1, radius=1)
-    denmerge = core.std.ShufflePlanes([denoise, sharpen, sharpen], [0,1,2], colorfamily=sharpen.format.color_family)
+    denoise = hybrid_denoise(dehalo, 0.60, 1.0)
 
 
     #Debanding
-    Mask = kgf.retinex_edgemask(denmerge, sigma=0.1)
+    Mask = kgf.retinex_edgemask(denoise, sigma=0.1)
     detail_mask = core.std.Binarize(Mask,9828,0)
-    deband = vdf.deband.dumb3kdb(denmerge, threshold=26, grain=6)
-    deband = core.std.MaskedMerge(deband, denmerge, detail_mask)
+    deband = vdf.deband.dumb3kdb(denoise, threshold=34, grain=10)
+    deband = core.std.MaskedMerge(deband, denoise, detail_mask)
 
 
     #Graining
     graigasm_args = dict(
         thrs=[x << 8 for x in (32, 80, 128, 176)],
-        strengths=[(0.3, 0.1), (0.2, 0.0), (0.1, 0.0), (0.0, 0.0)],
+        strengths=[(0.4, 0.2), (0.3, 0.1), (0.2, 0.0), (0.0, 0.0)],
         sizes=(1.25, 1.15, 1, 1),
         sharps=(70, 60, 50, 50),
         grainers=[
@@ -98,7 +89,7 @@ class Encoding:
         assert self.file.a_src
         assert self.file.a_enc_cut
 
-        v_encoder = X265Encoder('settings/x265_settings_S2')
+        v_encoder = X265Encoder('settings/x265_settings_S1')
 
         a_extracters = [
             BasicTool(

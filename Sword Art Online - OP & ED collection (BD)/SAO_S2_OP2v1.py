@@ -32,7 +32,6 @@ def main() -> vs.VideoNode:
     import vardefunc as vdf
     import kagefunc as kgf
     import EoEfunc as eoe
-    import mvsfunc as mvf
     import insaneAA
     import lvsfunc as lvf
     import vsTAAmbk as taa
@@ -42,28 +41,30 @@ def main() -> vs.VideoNode:
 
 
     #Rescale
-    src = kgf.inverse_scale(src, height=720, kernel='bicubic', b=1/3, c=1/3)
-    rescale = nnedi3_resample(src).resize.Spline36(1920, 1080, format=vs.YUV420P16)
+    y = get_y(src)
+    rescale = kgf.inverse_scale(y, height=720, kernel='bicubic', b=1/3, c=1/3)
+    rescale = nnedi3_resample(rescale).resize.Spline36(1920, 1080, format=vs.GRAY16)
+    scaled = core.std.ShufflePlanes([rescale, src], planes=[0, 1, 2], colorfamily=vs.YUV)
 
 
     #AA
-    luma = get_y(rescale)
-    aa = taa.TAAmbk(luma, aatype='Nnedi3')
-    aamerged = vdf.misc.merge_chroma(aa, rescale)
+    aa_y = get_y(rescale)
+    aa = taa.TAAmbk(aa_y, aatype='Nnedi3')
+    aamerged = vdf.misc.merge_chroma(aa, scaled)
 
 
     #Custom AA
-    customaa = insaneAA.insaneAA(rescale, nnedi3_mode=insaneAA.NNEDI3Mode.NNEDI3, nnedi3_device=-1, descale_strength=0.84, kernel='bicubic', descale_height=720)
+    customaa = insaneAA.insaneAA(scaled, nnedi3_mode=insaneAA.NNEDI3Mode.NNEDI3, nnedi3_device=-1, descale_strength=0.84, kernel='bicubic', descale_height=720)
     cusaa = lvf.misc.replace_ranges(aamerged, customaa, [(165, 272)])
 
 
     #Sharpening
-    sharpen = hvf.ContraSharpening(cusaa, rescale)
+    sharpen = hvf.ContraSharpening(cusaa, scaled)
 
 
     #Denoise
-    clip_y = mvf.GetPlane(sharpen, 0)
-    denoise = eoe.denoise.BM3D(clip_y, 1, radius=1)
+    den_y = get_y(sharpen)
+    denoise = eoe.denoise.BM3D(den_y, 1, radius=1)
     denmerge = core.std.ShufflePlanes([denoise, sharpen, sharpen], [0,1,2], colorfamily=sharpen.format.color_family)
 
 

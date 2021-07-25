@@ -32,7 +32,6 @@ def main() -> vs.VideoNode:
     import vardefunc as vdf
     import kagefunc as kgf
     import EoEfunc as eoe
-    import mvsfunc as mvf
     import vsTAAmbk as taa
 
     src = JPBD.clip_cut
@@ -40,23 +39,25 @@ def main() -> vs.VideoNode:
 
 
     #Rescale
-    src = kgf.inverse_scale(src, height=720, kernel='bicubic', b=1/3, c=1/3)
-    rescale = nnedi3_resample(src).resize.Spline36(1920, 1080, format=vs.YUV420P16)
+    y = get_y(src)
+    rescale = kgf.inverse_scale(y, height=720, kernel='bicubic', b=1/3, c=1/3)
+    rescale = nnedi3_resample(rescale).resize.Spline36(1920, 1080, format=vs.GRAY16)
+    scaled = core.std.ShufflePlanes([rescale, src], planes=[0, 1, 2], colorfamily=vs.YUV)
 
 
     #AA
-    luma = get_y(rescale)
-    aa = taa.TAAmbk(luma, aatype='Nnedi3')
-    aamerged = vdf.misc.merge_chroma(aa, rescale)
+    aa_y = get_y(scaled)
+    aa = taa.TAAmbk(aa_y, aatype='Nnedi3')
+    aamerged = vdf.misc.merge_chroma(aa, scaled)
 
 
     #Sharpening
-    sharpen = hvf.ContraSharpening(aamerged, rescale)
+    sharpen = hvf.ContraSharpening(aamerged, scaled)
 
 
     #Denoise
-    clip_y = mvf.GetPlane(sharpen, 0)
-    denoise = eoe.denoise.BM3D(clip_y, 1, radius=1)
+    den_y = get_y(sharpen)
+    denoise = eoe.denoise.BM3D(den_y, 1, radius=1)
     denmerge = core.std.ShufflePlanes([denoise, sharpen, sharpen], [0,1,2], colorfamily=sharpen.format.color_family)
 
 
