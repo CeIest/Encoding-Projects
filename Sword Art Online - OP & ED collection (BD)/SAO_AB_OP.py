@@ -17,7 +17,6 @@ SRC_FB = FileInfo(r'src/Facebook.mkv',
                 preset=[PresetWEB, PresetAAC])
 SRC_FB.name_file_final = VPath(fr"premux/{SRC_FB.name} (Premux).mkv")
 SRC_FB.do_qpfile = True
-#Doesn't work very well, whoops...
 
 SRC_AD = FileInfo(r'src/Game_RIP.mkv', preset=[PresetWEB, PresetAAC])
 SRC_AD.a_src = VPath(f"{SRC_AD.name}.aac")
@@ -36,17 +35,19 @@ def main() -> vs.VideoNode:
     import EoEfunc as eoe
 
     src = SRC_FB.clip_cut
-    src = depth(src, 32)
+    src = depth(src, 16)
 
 
     #Rescale
-    src = kgf.inverse_scale(src, height=874, kernel='bicubic', b=0, c=1/2)
-    rescale = nnedi3_resample(src).resize.Spline36(1920, 1080, format=vs.YUV420P16)
+    y = get_y(src)
+    rescale = kgf.inverse_scale(y, height=720, kernel='bicubic', b=1/3, c=1/3)
+    rescale = nnedi3_resample(rescale).resize.Spline36(1920, 1080, format=vs.GRAY16)
+    scaled = core.std.ShufflePlanes([rescale, src], planes=[0, 1, 2], colorfamily=vs.YUV)
 
 
     #Denoise
     rescale = depth(rescale, 32)
-    denoise = eoe.denoise.BM3D(rescale, 1, radius=2)
+    denoise = eoe.denoise.BM3D(scaled, 1, radius=2)
 
 
     #Deblock
@@ -57,7 +58,7 @@ def main() -> vs.VideoNode:
     #AA
     luma = get_y(deblock)
 
-    aa = core.sangnom.SangNom(deblock, aa=18).sangnom.SangNom(aa=18)
+    aa = core.sangnom.SangNom(deblock, aa=17).sangnom.SangNom(aa=17)
 
     aa = vdf.misc.merge_chroma(aa, deblock)
     aa = hvf.FastLineDarkenMOD(aa, strength=36, protection=5, threshold=2, thinning=0)
