@@ -1,3 +1,3 @@
 -o {clip_output:s} - --y4m
 --output-depth {bits:d}
---preset veryslow
+--preset veryslow --crf 18
