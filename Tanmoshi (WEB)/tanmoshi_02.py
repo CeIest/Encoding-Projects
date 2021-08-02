@@ -34,22 +34,25 @@ def main() -> vs.VideoNode:
     src_fu = src_fu[:24541] + src_bl[24541:24815] + src_fu[24815:] #Replacing one shitty scene from FU with B-Global
     src_fu, src_wk, src_bl = [depth(x, 16) for x in [src_fu, src_wk, src_bl]]
 
+
     dehardsubed = dehardsub(src_wk, src_fu, replace_scenes)
+
 
 # Denoise
     denoise = eoe.denoise.BM3D(dehardsubed, 1, radius=1)
     denoise = cast(vs.VideoNode, denoise)
 
+
 # Anti-aliasing
     luma = get_y(denoise)
     lineart = SobelStd().get_mask(luma).std.Maximum().std.Binarize(75 << 8).std.Convolution([1]*9)
-    lineart = lvf.misc.replace_ranges(lineart, vdf.mask.region_mask(lineart, left=1215), [(11858, 11994)])
 
     aaa_a = upscaled_sraa(luma, 2160, 3, alpha=0.4, beta=0.5, gamma=40, nrad=3, mdis=20)
     aaa_a = core.std.Expr((aaa_a, luma), 'x y min')
 
     aa = core.std.MaskedMerge(luma, aaa_a, lineart)
     aa = vdf.misc.merge_chroma(aa, denoise)
+
 
 # Debanding
     range_mask = MinMax(3, 2).get_mask(aa, 2500, 2500)
@@ -60,7 +63,7 @@ def main() -> vs.VideoNode:
 
     deband = vdf.deband.dumb3kdb(aa, 16, threshold=[36, 48], grain=16)
     deband = core.std.MaskedMerge(deband, aa, detail_mask)
-    # 35792
+
 
 # Graining
     graigasm_args = dict(
@@ -79,6 +82,10 @@ def main() -> vs.VideoNode:
     # comp = lvf.comparison.stack_compare(src_wk, src_fu, make_diff=True, warn=True)
     final = depth(grain, 10)
 
+
+    # scomp = lvf.comparison.stack_compare(src_fu, src_bl, make_diff=True, warn=True)
+    # diff = lvf.comparison.diff(src_fu, src_bl)
+    
     return final
 
 
