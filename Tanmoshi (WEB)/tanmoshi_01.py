@@ -22,9 +22,9 @@ replace_scenes: List[Tuple[int, int]] = [
 
 
 # WAKANIM dehardsubbed with Funimation, audio trimmed and taken from Amazon
-WEB_FU = FileInfo("eps/[SubsPlease] Tantei wa Mou, Shindeiru. - 01 (1080p) [F3C71194].mkv", 240, None, preset=[PresetWEB, PresetEAC3])
+WEB_FU = FileInfo("eps/[SubsPlease] Tantei wa Mou, Shindeiru. - 01 (1080p) [F3C71194].mkv", (240, None), preset=[PresetWEB, PresetEAC3])
 WEB_WK = FileInfo("eps/The Detective Is Already Dead E01 [1080p][AAC][JapDub][GerSub][Web-DL].mkv", preset=[PresetWEB, PresetEAC3])
-WEB_AMZ = FileInfo('eps/Tantei wa Mou, Shindeiru. - 01 (Amazon dAnime CBR 720p).mkv', None, -1, preset=[PresetWEB, PresetEAC3])
+WEB_AMZ = FileInfo('eps/Tantei wa Mou, Shindeiru. - 01 (Amazon dAnime CBR 720p).mkv', (None, -1), preset=[PresetWEB, PresetEAC3])
 WEB_AMZ.name_clip_output = VPath(WEB_AMZ.name + '.265')
 
 

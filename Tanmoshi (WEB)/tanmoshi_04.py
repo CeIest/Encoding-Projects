@@ -18,10 +18,10 @@ replace_scenes: List[Tuple[int, int]] = [(0, 2038), (8697, 8731), (12076, 12171)
 
 
 # WAKANIM dehardsubbed with Funimation, audio trimmed and taken from Amazon
-WEB_FU = FileInfo("Episodes/Funimation/[SubsPlease] Tantei wa Mou, Shindeiru. - 04 (1080p) [51D648A7].mkv", 240, None, preset=[PresetWEB, PresetEAC3])
+WEB_FU = FileInfo("Episodes/Funimation/[SubsPlease] Tantei wa Mou, Shindeiru. - 04 (1080p) [51D648A7].mkv", (240, None), preset=[PresetWEB, PresetEAC3])
 WEB_WK = FileInfo("Episodes/Wakanim/The Detective Is Already Dead E04 [1080p][AAC][JapDub][GerSub][Web-DL].mkv", preset=[PresetWEB, PresetEAC3])
-WEB_BL = FileInfo("Episodes/B-global/[NC-Raws] 侦探已死 - 04 [B-Global][WEB-DL][1080p][AVC AAC][ENG_TH_SRT][MKV].mkv", 1, None, preset=[PresetWEB, PresetEAC3])
-WEB_AMZ = FileInfo('Episodes/Amazon/Tantei wa Mou, Shindeiru. - 04 (Amazon dAnime CBR 720p).mkv', None, -1, preset=[PresetWEB, PresetEAC3])
+WEB_BL = FileInfo("Episodes/B-global/[NC-Raws] 侦探已死 - 04 [B-Global][WEB-DL][1080p][AVC AAC][ENG_TH_SRT][MKV].mkv", (1, None), preset=[PresetWEB, PresetEAC3])
+WEB_AMZ = FileInfo('Episodes/Amazon/Tantei wa Mou, Shindeiru. - 04 (Amazon dAnime CBR 720p).mkv', (None, -1), preset=[PresetWEB, PresetEAC3])
 WEB_AMZ.name_clip_output = VPath(WEB_AMZ.name + '.265')
 
 
@@ -37,7 +37,7 @@ def main() -> vs.VideoNode:
     # Scenefiltering the grainy flashback scenes
     den_src_fu = eoe.denoise.BM3D(src_fu, 3, radius=4)
     grain_src_fu = core.grain.Add(den_src_fu, var=30, uvar=10, constant=False)
-    src_fu = lvf.rfs(src_fu, grain_src_fu, ranges=[(20172, 20326), (20640, 20681), (22043, 22397)])
+    src_fu = lvf.rfs(src_fu, grain_src_fu, ranges=[(20172, 20326), (20643, 20676), (22046, 22385)])
 
 
     dehardsubed = dehardsub(src_wk, src_fu, replace_scenes)
@@ -96,7 +96,7 @@ def main() -> vs.VideoNode:
 if __name__ == '__main__':
     filtered = main()
     brrrr = Encoding(WEB_AMZ, filtered)
-  # brrrr.do_patch([(x, x)]) # For patching
+    # brrrr.do_patch([(22385, 22397)])
     brrrr.run()
     brrrr.cleanup()
 else:

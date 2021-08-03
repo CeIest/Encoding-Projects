@@ -1,11 +1,10 @@
 from typing import List, Union
 
 import vapoursynth as vs
-from vardautomation import (JAPANESE, AudioCutter, AudioStream, BasicTool,
+from vardautomation import (JAPANESE, EztrimCutter, AudioStream, BasicTool,
                             FileInfo, Mux, Patch, RunnerConfig, SelfRunner,
                             VideoStream, X265Encoder)
-                            
-from vardautomation.types import Range
+from vardefunc.types import Range
 
 core = vs.core
 
@@ -20,9 +19,9 @@ class Encoding:
 
         self.v_encoder = X265Encoder('tantei_common/x265_settings')
         self.a_extracters = [
-            BasicTool('mkvextract', [self.file.path.to_str(), 'tracks', f'1:{self.file.a_src.format(1).to_str()}'])
+            BasicTool('mkvextract', [self.file.path.to_str(), 'tracks', f'1:{self.file.a_src.set_track(1).to_str()}'])
         ]
-        self.a_cutters = [AudioCutter(self.file, track=1)]
+        self.a_cutters = [EztrimCutter(self.file, track=1)]
 
 
     def run(self) -> None:
@@ -32,7 +31,7 @@ class Encoding:
             self.file,
             streams=(
                 VideoStream(self.file.name_clip_output, '', JAPANESE),
-                [AudioStream(self.file.a_src_cut.format(1), '', JAPANESE)],
+                [AudioStream(self.file.a_src_cut.set_track(1), '', JAPANESE)],
                 None
             )
         )

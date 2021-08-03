@@ -18,10 +18,10 @@ replace_scenes: List[Tuple[int, int]] = [(1008, 3287), (14259, 14491), (28551, 2
 
 
 # WAKANIM dehardsubbed with Funimation, audio trimmed and taken from Amazon
-WEB_FU = FileInfo("Episodes/Funimation/[SubsPlease] Tantei wa Mou, Shindeiru. - 03 (1080p) [A7518BB0].mkv", 240, None, preset=[PresetWEB, PresetEAC3])
+WEB_FU = FileInfo("Episodes/Funimation/[SubsPlease] Tantei wa Mou, Shindeiru. - 03 (1080p) [A7518BB0].mkv", (240, None), preset=[PresetWEB, PresetEAC3])
 WEB_WK = FileInfo("Episodes/Wakanim/The Detective Is Already Dead E03 [1080p][E-AC3][JapDub][GerSub][Web-DL].mkv", preset=[PresetWEB, PresetEAC3])
-WEB_BL = FileInfo("Episodes/B-Global/[NC-Raws] 侦探已死 - 03 [B-Global][WEB-DL][1080p][AVC AAC][CHS_CHT_ENG_TH_SRT][MKV].mkv", 1, None, preset=[PresetWEB, PresetEAC3])
-WEB_AMZ = FileInfo('Episodes/Amazon/Tantei wa Mou, Shindeiru. - 03 (Amazon dAnime CBR 720p).mkv', None, -1, preset=[PresetWEB, PresetEAC3])
+WEB_BL = FileInfo("Episodes/B-Global/[NC-Raws] 侦探已死 - 03 [B-Global][WEB-DL][1080p][AVC AAC][CHS_CHT_ENG_TH_SRT][MKV].mkv", (1, None), preset=[PresetWEB, PresetEAC3])
+WEB_AMZ = FileInfo('Episodes/Amazon/Tantei wa Mou, Shindeiru. - 03 (Amazon dAnime CBR 720p).mkv', (None, -1), preset=[PresetWEB, PresetEAC3])
 WEB_AMZ.name_clip_output = VPath(WEB_AMZ.name + '.265')
 
 
